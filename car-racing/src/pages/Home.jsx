@@ -3,7 +3,7 @@ import React from "react";
 const Home = ({ onStart }) => {
   return (
     <div style={styles.container}>
-      <h1>¡Juego de Carreras!</h1>
+      <h1>¡Bienvenido a la cota!</h1>
       <button style={styles.button} onClick={onStart}>
         Iniciar Carrera
       </button>
