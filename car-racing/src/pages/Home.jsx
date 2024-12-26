@@ -22,7 +22,7 @@ const Home = ({ onStart }) => {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>¡Bienvenido a la cota🤙🏼!</h1>
+      <h1 style={styles.title}>¡Bienvenido a la cota!</h1>
       <button style={styles.button} onClick={onStart}>
         Esquiva los obstáculos
       </button>
