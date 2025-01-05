@@ -41,11 +41,11 @@ const Game = () => {
       event.preventDefault();
     };
 
-    // Deshabilita el desplazamiento al tocar la pantalla
+    
     document.body.addEventListener("touchmove", preventScroll, { passive: false });
 
     return () => {
-      // Limpia el evento al desmontar el componente
+      
       document.body.removeEventListener("touchmove", preventScroll);
     };
   }, []);
@@ -102,7 +102,7 @@ const Game = () => {
         carPosition.y < obs.y + obstacleHeight &&
         carPosition.y + playerHeight > obs.y
       ) {
-        saveScore(score); // Guarda la puntuación en Firebase
+        saveScore(score); 
         alert(`¡Caíste! Tu puntuación fue: ${score}`);
         setIsGameActive(false);
         setObstacles([]);
@@ -214,7 +214,7 @@ const Game = () => {
       left: 0,
       width: "10%",
       height: "100%",
-      backgroundImage: "url('/images/bushes.png')", // Cambia a la imagen de arbustos
+      backgroundImage: "url('/images/bushes.png')",
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
     },
@@ -224,7 +224,7 @@ const Game = () => {
       right: 0,
       width: "10%",
       height: "100%",
-      backgroundImage: "url('/images/bushes.png')", // Cambia a la imagen de arbustos
+      backgroundImage: "url('/images/bushes.png')", 
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
     },
