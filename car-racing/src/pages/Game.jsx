@@ -5,15 +5,15 @@ import db from "../firebase";
 const Game = () => {
   const [carPosition, setCarPosition] = useState({ x: 50, y: 400 });
   const [obstacles, setObstacles] = useState([]);
-  const [speed, setSpeed] = useState(5); // Velocidad inicial de los obstáculos
-  const [score, setScore] = useState(0); // Puntuación o tiempo de supervivencia
-  const [username, setUsername] = useState(""); // Nombre del jugador
-  const [isGameActive, setIsGameActive] = useState(false); // Controla si el juego está activo
-  const [obstacleInterval, setObstacleInterval] = useState(1500); // Intervalo inicial de generación de obstáculos
+  const [speed, setSpeed] = useState(5); 
+  const [score, setScore] = useState(0); 
+  const [username, setUsername] = useState("");
+  const [isGameActive, setIsGameActive] = useState(false); 
+  const [obstacleInterval, setObstacleInterval] = useState(1500); 
 
   // Función para guardar el puntaje
   const saveScore = async (newScore) => {
-    if (!username) return; // No guardar si no hay un nombre de usuario
+    if (!username) return; 
     try {
       await addDoc(collection(db, "rankings"), {
         name: username,
@@ -26,14 +26,14 @@ const Game = () => {
   };
 
   const handleTouch = (event) => {
-    if (!isGameActive) return; // No mover el coche si el juego no está activo
-    event.preventDefault(); // Previene el desplazamiento de la pantalla
-    const touchX = event.touches[0].clientX;
+    if (!isGameActive) return; 
+    event.preventDefault(); 
 
-    setCarPosition((prev) => ({
-      ...prev,
-      x: Math.max(0, Math.min(window.innerWidth - 50, touchX - 25)), // Asegura que no se salga de los límites
-    }));
+    const touch = event.touches[0];
+    const newX = Math.max(0, Math.min(window.innerWidth - 50, touch.clientX - 25));
+    const newY = Math.max(0, Math.min(window.innerHeight - 100, touch.clientY - 50)); 
+
+    setCarPosition({ x: newX, y: newY });
   };
 
   useEffect(() => {
@@ -52,13 +52,13 @@ const Game = () => {
 
   // Generar nuevos obstáculos
   useEffect(() => {
-    if (!isGameActive) return; // No generar obstáculos si el juego no está activo
+    if (!isGameActive) return; 
     const generateObstacle = () => {
       setObstacles((prev) => [
         ...prev,
         {
-          x: Math.random() * (window.innerWidth - 50), // Posición aleatoria
-          y: -50, // Empieza fuera de la pantalla
+          x: Math.random() * (window.innerWidth - 50), 
+          y: -50, 
         },
       ]);
     };
@@ -69,18 +69,18 @@ const Game = () => {
 
   // Mover obstáculos y ajustar velocidad
   useEffect(() => {
-    if (!isGameActive) return; // No mover obstáculos si el juego no está activo
+    if (!isGameActive) return; 
     const interval = setInterval(() => {
       setObstacles((prev) =>
         prev
           .map((obs) => ({ ...obs, y: obs.y + speed }))
-          .filter((obs) => obs.y < window.innerHeight) // Filtrar obstáculos fuera de pantalla
+          .filter((obs) => obs.y < window.innerHeight) 
       );
 
       setScore((prev) => prev + 1);
       if (score > 0 && score % 50 === 0) {
-        setSpeed((prev) => prev + 1); // Incrementa velocidad cada 50 puntos
-        setObstacleInterval((prev) => Math.max(300, prev - 100)); // Reduce el intervalo
+        setSpeed((prev) => prev + 1); 
+        setObstacleInterval((prev) => Math.max(300, prev - 100)); 
       }
     }, 50);
 
@@ -89,7 +89,7 @@ const Game = () => {
 
   // Detectar colisiones
   useEffect(() => {
-    if (!isGameActive) return; // No detectar colisiones si el juego no está activo
+    if (!isGameActive) return; 
     obstacles.forEach((obs) => {
       const playerWidth = 40;
       const playerHeight = 20;
@@ -103,7 +103,7 @@ const Game = () => {
         carPosition.y + playerHeight > obs.y
       ) {
         saveScore(score); // Guarda la puntuación en Firebase
-        alert(`¡Chocaste! Tu puntuación fue: ${score}`);
+        alert(`¡Caíste! Tu puntuación fue: ${score}`);
         setIsGameActive(false);
         setObstacles([]);
         setScore(0);
@@ -123,79 +123,115 @@ const Game = () => {
     setObstacleInterval(1500);
   };
 
-  return (
-    <div style={styles.container} onTouchMove={handleTouch}>
-      {!isGameActive && (
-        <div style={styles.startScreen}>
-          <h1>Bienvenido al Juego</h1>
-          <input
-            type="text"
-            placeholder="Ingresa tu nombre"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            style={styles.input}
-          />
-          <button onClick={startGame} style={styles.button}>
-            Comenzar
-          </button>
-        </div>
-      )}
-      {isGameActive && (
-        <>
-          <h1 style={styles.score}>Puntuación: {score}</h1>
-          {obstacles.map((obs, index) => (
-            <div
-              key={index}
-              style={{
-                ...styles.obstacle,
-                left: obs.x,
-                top: obs.y,
-              }}
+
+    return (
+      <div style={styles.container} onTouchMove={handleTouch}>
+        {!isGameActive && (
+          <div style={styles.startScreen}>
+            <h1>Bienvenido al Juego</h1>
+            <input
+              type="text"
+              placeholder="Ingresa tu nombre"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              style={styles.input}
             />
-          ))}
-          <div style={{ ...styles.skater, left: carPosition.x, top: carPosition.y }} />
-        </>
-      )}
-    </div>
-  );
-};
-
-const styles = {
-  container: { position: "relative", width: "100%", height: "100vh", background: "#ccc", overflow: "hidden" },
-  skater: {
-    position: "absolute",
-    width: "50px",
-    height: "100px",
-    backgroundImage: "url('/images/longboard.png')",
-    backgroundSize: "contain",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-  },
-  obstacle: {
-    position: "absolute",
-    width: "50px",
-    height: "50px",
-    backgroundImage: "url('/images/hole.png')",
-    backgroundSize: "contain",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-  },
-  score: { position: "absolute", top: "10px", left: "10px", fontSize: "20px", color: "white" },
-  startScreen: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100%",
-    backgroundColor: "#ccc",
-  },
-  input: { padding: "10px", fontSize: "16px", marginBottom: "20px" },
-  button: { padding: "10px 20px", fontSize: "18px", cursor: "pointer" },
-};
-
-export default Game;
-
-
+            <button onClick={startGame} style={styles.button}>
+              Comenzar
+            </button>
+          </div>
+        )}
+        {isGameActive && (
+          <>
+            <h1 style={styles.score}>Puntuación: {score}</h1>
+            {/* Arbustos del lado izquierdo */}
+            <div style={styles.bushesLeft}></div>
+            {/* Arbustos del lado derecho */}
+            <div style={styles.bushesRight}></div>
+            {obstacles.map((obs, index) => (
+              <div
+                key={index}
+                style={{
+                  ...styles.obstacle,
+                  left: obs.x,
+                  top: obs.y,
+                }}
+              />
+            ))}
+            <div style={{ ...styles.skater, left: carPosition.x, top: carPosition.y }} />
+          </>
+        )}
+      </div>
+    );
+  };
+  
+  const styles = {
+    container: {
+      position: "relative",
+      width: "100%",
+      height: "100vh",
+      background: "#ccc",
+      overflow: "hidden",
+    },
+    skater: {
+      position: "absolute",
+      width: "50px",
+      height: "100px",
+      backgroundImage: "url('/images/longboard.png')",
+      backgroundSize: "contain",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+    },
+    obstacle: {
+      position: "absolute",
+      width: "50px",
+      height: "50px",
+      backgroundImage: "url('/images/hole.png')",
+      backgroundSize: "contain",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+    },
+    score: {
+      position: "absolute",
+      top: "calc(env(safe-area-inset-top, 0px) + 10px)",
+      left: "10px",
+      fontSize: "20px",
+      color: "white",
+    },
+    startScreen: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100%",
+      backgroundColor: "#ccc",
+    },
+    input: { padding: "10px", fontSize: "16px", marginBottom: "20px" },
+    button: { padding: "10px 20px", fontSize: "18px", cursor: "pointer" },
+    bushesLeft: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "10%",
+      height: "100%",
+      backgroundImage: "url('/images/bushes.png')", // Cambia a la imagen de arbustos
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+    },
+    bushesRight: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      width: "10%",
+      height: "100%",
+      backgroundImage: "url('/images/bushes.png')", // Cambia a la imagen de arbustos
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+    },
+  };
+  
+  export default Game;
+  
 
 // import React, { useState, useEffect } from "react";
 

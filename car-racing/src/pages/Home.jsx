@@ -27,10 +27,21 @@ const Home = ({ onStart }) => {
         Esquiva los obstáculos
       </button>
       <div style={styles.ranking}>
-        <h2>Top 10 jugadores</h2>
+        <h2>Top 10 Jugadores</h2>
         <ol style={styles.rankingList}>
           {ranking.map((player, index) => (
-            <li key={index} style={styles.rankingItem}>
+            <li
+              key={index}
+              style={
+                index === 0
+                  ? styles.firstPlace
+                  : index === 1
+                  ? styles.secondPlace
+                  : index === 2
+                  ? styles.thirdPlace
+                  : styles.rankingItem
+              }
+            >
               {index + 1}. {player.name}: {player.score}
             </li>
           ))}
@@ -48,14 +59,14 @@ const styles = {
     justifyContent: "center",
     height: "100vh",
     backgroundImage: "url('/images/fondo.jpg')", // Ruta de la imagen de fondo
-    backgroundSize: "cover", // Ajusta la imagen al tamaño completo del contenedor
-    backgroundRepeat: "no-repeat", // No repetir la imagen
-    backgroundPosition: "center", // Centrar la imagen
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
   },
   title: {
     fontSize: "36px",
     color: "#fff",
-    textShadow: "2px 2px 4px rgba(0, 0, 0, 0.7)", // Agrega un sombreado al texto
+    textShadow: "2px 2px 4px rgba(0, 0, 0, 0.7)",
     marginBottom: "20px",
   },
   button: {
@@ -63,14 +74,14 @@ const styles = {
     fontSize: "18px",
     borderRadius: "5px",
     cursor: "pointer",
-    backgroundColor: "#ff5722", // Color de fondo del botón
-    color: "#fff", // Color del texto del botón
-    border: "none", // Sin borde
-    boxShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)", // Sombras
+    backgroundColor: "#ff5722",
+    color: "#fff",
+    border: "none",
+    boxShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
     marginBottom: "20px",
   },
   ranking: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo semitransparente
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: "15px",
     borderRadius: "8px",
     color: "#fff",
@@ -83,9 +94,31 @@ const styles = {
     padding: 0,
     margin: 0,
   },
-  rankingItem: {
+  firstPlace: {
+    fontSize: "20px",
+    fontWeight: "bold",
+    color: "gold",
+    textShadow: "1px 1px 3px rgba(0, 0, 0, 0.8)",
+    margin: "10px 0",
+  },
+  secondPlace: {
+    fontSize: "18px",
+    fontWeight: "bold",
+    color: "silver",
+    textShadow: "1px 1px 3px rgba(0, 0, 0, 0.8)",
+    margin: "8px 0",
+  },
+  thirdPlace: {
     fontSize: "16px",
+    fontWeight: "bold",
+    color: "#cd7f32", // Bronce
+    textShadow: "1px 1px 3px rgba(0, 0, 0, 0.8)",
+    margin: "6px 0",
+  },
+  rankingItem: {
+    fontSize: "14px",
     margin: "5px 0",
+    color: "#fff",
   },
 };
 
