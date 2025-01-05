@@ -17,7 +17,7 @@ const Home = ({ onStart }) => {
   };
 
   useEffect(() => {
-    fetchRanking(); // Obtener el ranking al cargar la página de inicio
+    fetchRanking(); 
   }, []);
 
   return (
